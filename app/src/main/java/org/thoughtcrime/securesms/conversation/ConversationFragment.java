@@ -140,6 +140,7 @@ import org.thoughtcrime.securesms.messagedetails.MessageDetailsFragment;
 import org.thoughtcrime.securesms.messagerequests.MessageRequestState;
 import org.thoughtcrime.securesms.messagerequests.MessageRequestViewModel;
 import org.thoughtcrime.securesms.mms.AttachmentManager;
+import org.thoughtcrime.securesms.mms.AudioSlide;
 import org.thoughtcrime.securesms.mms.GlideApp;
 import org.thoughtcrime.securesms.mms.OutgoingMessage;
 import org.thoughtcrime.securesms.mms.PartAuthority;
@@ -181,6 +182,7 @@ import org.thoughtcrime.securesms.util.StickyHeaderDecoration;
 import org.thoughtcrime.securesms.util.StorageUtil;
 import org.thoughtcrime.securesms.util.TextSecurePreferences;
 import org.thoughtcrime.securesms.util.TopToastPopup;
+import org.thoughtcrime.securesms.util.TranscribeVoiceMessage;
 import org.thoughtcrime.securesms.util.Util;
 import org.thoughtcrime.securesms.util.ViewUtil;
 import org.thoughtcrime.securesms.util.WindowUtil;
@@ -1149,6 +1151,23 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
         startActivity(PaymentsActivity.navigateToPaymentDetails(requireContext(), mediaMessage.getPayment().getUuid()));
       }
     }
+  }
+
+  private void handleTranscribeMessage(MediaMmsMessageRecord messageRecord) {
+    if (messageRecord.isViewOnce()) {
+      throw new AssertionError("Cannot transcribe a view-once message.");
+    }
+
+    final AudioSlide audioRecord = messageRecord.getSlideDeck().getAudioSlide();
+
+    if (audioRecord != null && audioRecord.hasAudio() && audioRecord.getUri() != null) {
+      TranscribeVoiceMessage            transcribeTask    = new TranscribeVoiceMessage(getActivity());
+      transcribeTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, messageRecord);
+      return;
+    }
+
+    Log.w(TAG, "No slide with voice media found, failing nicely.");
+    Toast.makeText(getActivity(), "test", Toast.LENGTH_LONG).show();
   }
 
   private void performSave(final MediaMmsMessageRecord message) {
@@ -2261,6 +2280,9 @@ public class ConversationFragment extends LoggingFragment implements Multiselect
           break;
         case DELETE:
           handleDeleteMessages(conversationMessage.getMultiselectCollection().toSet());
+          break;
+        case TRANSCRIBE:
+          handleTranscribeMessage((MediaMmsMessageRecord) conversationMessage.getMessageRecord());
           break;
       }
     }

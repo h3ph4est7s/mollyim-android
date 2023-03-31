@@ -3154,6 +3154,8 @@
     <string name="conversation_selection__menu_multi_select">Select</string>
     <!-- Button to view a in-chat payment message\'s full payment details; Action item with hyphenation. Translation can use soft hyphen - Unicode U+00AD  -->
     <string name="conversation_selection__menu_payment_details">Payment details</string>
+    <!-- Button to transcribe an incoming message; Action item with hyphenation. Translation can use soft hyphen - Unicode U+00AD -->
+    <string name="conversation_selection__menu_transcribe">Transcribe</string>
 
     <!-- conversation_expiring_on -->
 

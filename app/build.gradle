@@ -445,6 +445,7 @@ dependencies {
     implementation project(':qr')
     implementation project(':sticky-header-grid')
     implementation project(':photoview')
+    implementation project(':whisper')
 
     implementation libs.libsignal.android
     implementation libs.google.protobuf.javalite

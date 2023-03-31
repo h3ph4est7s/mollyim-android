@@ -497,6 +497,19 @@ public class MessageTable extends DatabaseTable implements MessageTypes, Recipie
     return updateMessageBodyAndType(messageId, body, MessageTypes.TOTAL_MASK, type);
   }
 
+  public InsertResult updateMessageBody(long messageId, String body) {
+    SQLiteDatabase db = databaseHelper.getSignalWritableDatabase();
+    db.execSQL("UPDATE " + TABLE_NAME + " SET " + BODY + " = ? " +
+               "WHERE " + ID + " = ?",
+               new String[] {body, messageId + ""});
+    long threadId = getThreadIdForMessage(messageId);
+
+    SignalDatabase.threads().update(threadId, true);
+    notifyConversationListeners(threadId);
+
+    return new InsertResult(messageId, threadId);
+  }
+
   public @NonNull List<MarkedMessageInfo> getViewedIncomingMessages(long threadId) {
     SQLiteDatabase db      = databaseHelper.getSignalReadableDatabase();
     String[]       columns = new String[]{ ID, RECIPIENT_ID, DATE_SENT, TYPE, THREAD_ID, STORY_TYPE};

@@ -25,6 +25,7 @@ final class MenuState {
   private final boolean delete;
   private final boolean reactions;
   private final boolean paymentDetails;
+  private final boolean transcribe;
 
   private MenuState(@NonNull Builder builder) {
     forward        = builder.forward;
@@ -36,6 +37,7 @@ final class MenuState {
     delete         = builder.delete;
     reactions      = builder.reactions;
     paymentDetails = builder.paymentDetails;
+    transcribe     = builder.transcribe;
   }
 
   boolean shouldShowForwardAction() {
@@ -73,6 +75,8 @@ final class MenuState {
   boolean shouldShowPaymentDetails() {
     return paymentDetails;
   }
+
+  boolean shouldShowTranscribeAction() { return transcribe; }
 
   static MenuState getMenuState(@NonNull Recipient conversationRecipient,
                                 @NonNull Set<MultiselectPart> selectedParts,
@@ -169,7 +173,18 @@ final class MenuState {
                                              ((MediaMmsMessageRecord)messageRecord).getSlideDeck().getStickerSlide() == null)
              .shouldShowForwardAction(shouldShowForwardAction)
              .shouldShowDetailsAction(!actionMessage && !conversationRecipient.isReleaseNotes())
-             .shouldShowReplyAction(canReplyToMessage(conversationRecipient, actionMessage, messageRecord, shouldShowMessageRequest, isNonAdminInAnnouncementGroup));
+             .shouldShowReplyAction(canReplyToMessage(conversationRecipient, actionMessage, messageRecord, shouldShowMessageRequest, isNonAdminInAnnouncementGroup))
+             .shouldShowTranscribeAction(mediaIsSelected                                             &&
+                                         !actionMessage                                              &&
+                                         !viewOnce                                                   &&
+                                         messageRecord.isMms()                                       &&
+                                         !hasPendingMedia                                            &&
+                                         !hasGift                                                    &&
+                                         !messageRecord.isMmsNotification()                          &&
+                                         ((MediaMmsMessageRecord)messageRecord).containsMediaSlide() &&
+                                         ((MediaMmsMessageRecord)messageRecord).getSlideDeck().getStickerSlide() == null &&
+                                         ((MediaMmsMessageRecord)messageRecord).getSlideDeck().getAudioSlide() != null &&
+                                         !messageRecord.isOutgoing());
     }
 
     return builder.shouldShowCopyAction(!actionMessage && !remoteDelete && hasText && !hasGift && !hasPayment)
@@ -235,6 +250,7 @@ final class MenuState {
     private boolean delete;
     private boolean reactions;
     private boolean paymentDetails;
+    private boolean transcribe;
 
     @NonNull Builder shouldShowForwardAction(boolean forward) {
       this.forward = forward;
@@ -278,6 +294,11 @@ final class MenuState {
 
     @NonNull Builder shouldShowPaymentDetails(boolean paymentDetails) {
       this.paymentDetails = paymentDetails;
+      return this;
+    }
+
+    @NonNull Builder shouldShowTranscribeAction(boolean transcribe) {
+      this.transcribe = transcribe;
       return this;
     }
 

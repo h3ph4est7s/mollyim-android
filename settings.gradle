@@ -67,6 +67,8 @@ include ':qr'
 //include ':qr-app'
 include ':sticky-header-grid'
 include ':photoview'
+include ':whisper'
+//include ':whisper-app'
 include ':core-ui'
 
 project(':paging').projectDir = file('paging/lib')
@@ -88,6 +90,9 @@ project(':contacts').projectDir = file('contacts/lib')
 
 project(':qr').projectDir = file('qr/lib')
 //project(':qr-app').projectDir = file('qr/app')
+
+project(':whisper').projectDir = file('whisper/lib')
+//project(':whisper-app').projectDir = file('whisper/app')
 
 rootProject.name='Molly'
 

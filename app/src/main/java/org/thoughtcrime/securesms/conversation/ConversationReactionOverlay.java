@@ -764,6 +764,10 @@ public final class ConversationReactionOverlay extends FrameLayout {
       items.add(new ActionItem(R.drawable.symbol_info_24, getResources().getString(R.string.conversation_selection__menu_message_details), () -> handleActionItemClicked(Action.VIEW_INFO)));
     }
 
+    if (menuState.shouldShowTranscribeAction()) {
+      items.add(new ActionItem(R.drawable.symbol_transcribe_24, getResources().getString(R.string.conversation_selection__menu_transcribe), () ->  handleActionItemClicked(Action.TRANSCRIBE)));
+    }
+
     backgroundView.setVisibility(menuState.shouldShowReactions() ? View.VISIBLE : View.INVISIBLE);
     foregroundView.setVisibility(menuState.shouldShowReactions() ? View.VISIBLE : View.INVISIBLE);
 
@@ -976,5 +980,6 @@ public final class ConversationReactionOverlay extends FrameLayout {
     PAYMENT_DETAILS,
     VIEW_INFO,
     DELETE,
+    TRANSCRIBE,
   }
 }
