@@ -29,6 +29,8 @@ import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.dependencies.ApplicationDependencies;
 import org.thoughtcrime.securesms.net.NetworkManager;
 
+import java.io.File;
+
 public class MapView extends org.osmdroid.views.MapView {
   private Marker               marker;
   private boolean isMyLocationEnabled = false;
@@ -58,6 +60,7 @@ public class MapView extends org.osmdroid.views.MapView {
     String userAgent = String.format("%s/%s", context.getString(R.string.app_name), BuildConfig.VERSION_NAME);
     final IConfigurationProvider config = Configuration.getInstance();
     final NetworkManager         nm     = ApplicationDependencies.getNetworkManager();
+    config.setOsmdroidTileCache(new File(context.getCacheDir(), "tiles"));
     config.load(context, PreferenceManager.getDefaultSharedPreferences(context));
     config.setUserAgentValue(userAgent);
     if(nm.isProxyEnabled()) {
