@@ -104,6 +104,8 @@ public class NetworkManager {
     return OrbotHelper.DEFAULT_PROXY_SOCKS_PORT;
   }
 
+  public SocksProxy getExistingProxy() { return isProxyEnabled() ? existingProxy : null; }
+
   public boolean applyProxyConfig() {
     SocksProxy newProxy;
 
