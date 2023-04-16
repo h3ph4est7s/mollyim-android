@@ -26,10 +26,10 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.thoughtcrime.securesms.BuildConfig;
 import org.thoughtcrime.securesms.R;
-import org.thoughtcrime.securesms.dependencies.ApplicationDependencies;
-import org.thoughtcrime.securesms.net.NetworkManager;
+import org.thoughtcrime.securesms.net.Network;
 
 import java.io.File;
+import java.net.Proxy;
 
 public class MapView extends org.osmdroid.views.MapView {
   private Marker               marker;
@@ -59,12 +59,12 @@ public class MapView extends org.osmdroid.views.MapView {
   private void setDefaultConfiguration(Context context) {
     String userAgent = String.format("%s/%s", context.getString(R.string.app_name), BuildConfig.VERSION_NAME);
     final IConfigurationProvider config = Configuration.getInstance();
-    final NetworkManager         nm     = ApplicationDependencies.getNetworkManager();
+    final Proxy proxy = Network.getProxy();
     config.setOsmdroidTileCache(new File(context.getCacheDir(), "tiles"));
     config.load(context, PreferenceManager.getDefaultSharedPreferences(context));
     config.setUserAgentValue(userAgent);
-    if(nm.isProxyEnabled()) {
-      config.setHttpProxy(nm.getExistingProxy().makeProxy());
+    if (proxy != null) {
+      config.setHttpProxy(proxy);
     }
 
     getZoomController().getDisplay().setPositions(
