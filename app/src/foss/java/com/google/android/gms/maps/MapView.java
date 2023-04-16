@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.util.AttributeSet;
 
 import androidx.core.content.res.ResourcesCompat;
-import androidx.preference.PreferenceManager;
 
 import com.google.android.gms.maps.GoogleMap.OnMapLoadedCallback;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -60,7 +59,6 @@ public class MapView extends org.osmdroid.views.MapView {
     final IConfigurationProvider config = Configuration.getInstance();
     final Proxy proxy = Network.getProxy();
     config.setOsmdroidTileCache(new File(context.getCacheDir(), "tiles"));
-    config.load(context, PreferenceManager.getDefaultSharedPreferences(context));
     config.setUserAgentValue(userAgent);
     if (proxy != null) {
       config.setHttpProxy(proxy);
