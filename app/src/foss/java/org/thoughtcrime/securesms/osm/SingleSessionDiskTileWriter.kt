@@ -4,14 +4,13 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import org.osmdroid.tileprovider.modules.IFilesystemCache
 import org.osmdroid.tileprovider.tilesource.ITileSource
-import org.signal.core.util.Hex
 import org.signal.core.util.logging.Log
 import org.thoughtcrime.securesms.util.EncryptedStreamUtils
-import org.whispersystems.signalservice.api.crypto.CryptoUtil
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.security.SecureRandom
+import java.util.UUID
 
 private val TAG = Log.tag(SingleSessionDiskTileWriter::class.java)
 
@@ -26,9 +25,9 @@ class SingleSessionDiskTileWriter(private val context: Context) : IFilesystemCac
   }
 
   private fun buildTileFile(tileSource: ITileSource, pMapTileIndex: Long): File {
-    val pathName = "$SingleSessionId/" + tileSource.getTileRelativeFilenameString(pMapTileIndex)
-    val digest = CryptoUtil.sha256(pathName.toByteArray())
-    return File(tileCacheDir, Hex.toStringCondensed(digest))
+    val pathName = tileSource.getTileRelativeFilenameString(pMapTileIndex) + SingleSessionId.toString(36)
+    val uuid = UUID.nameUUIDFromBytes(pathName.toByteArray())
+    return File(tileCacheDir, uuid.toString())
   }
 
   override fun saveFile(tileSource: ITileSource, pMapTileIndex: Long, pStream: InputStream, pExpirationTime: Long): Boolean {
@@ -55,8 +54,11 @@ class SingleSessionDiskTileWriter(private val context: Context) : IFilesystemCac
 
   override fun getExpirationTimestamp(pTileSource: ITileSource, pMapTileIndex: Long): Long? = null
 
-  override fun loadTile(tileSource: ITileSource, pMapTileIndex: Long): Drawable {
+  override fun loadTile(tileSource: ITileSource, pMapTileIndex: Long): Drawable? {
     val tileFile = buildTileFile(tileSource, pMapTileIndex)
+    if (!tileFile.exists()) {
+      return null
+    }
     EncryptedStreamUtils.getInputStream(context, tileFile).use { input ->
       return tileSource.getDrawable(input)
     }

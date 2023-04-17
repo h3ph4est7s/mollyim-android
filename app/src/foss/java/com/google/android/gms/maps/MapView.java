@@ -18,9 +18,7 @@ import org.osmdroid.api.IMapController;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.config.IConfigurationProvider;
 import org.osmdroid.tileprovider.MapTileProviderBase;
-import org.osmdroid.tileprovider.MapTileProviderBasic;
 import org.osmdroid.tileprovider.TileStates;
-import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.CustomZoomButtonsDisplay;
 import org.osmdroid.views.overlay.Marker;
@@ -28,7 +26,7 @@ import org.osmdroid.views.overlay.Marker;
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay;
 import org.thoughtcrime.securesms.R;
 import org.thoughtcrime.securesms.net.Network;
-import org.thoughtcrime.securesms.osm.SingleSessionDiskTileWriter;
+import org.thoughtcrime.securesms.osm.MapTileProvider;
 
 import java.io.File;
 import java.net.Proxy;
@@ -40,7 +38,7 @@ public class MapView extends org.osmdroid.views.MapView {
   private OnMapLoadedCallback  onMapLoadedCallback;
 
   static private MapTileProviderBase createTileProvider(Context context) {
-    return new MapTileProviderBasic(context, TileSourceFactory.DEFAULT_TILE_SOURCE, new SingleSessionDiskTileWriter(context));
+    return MapTileProvider.create(context);
   }
 
   public MapView(Context context) {
